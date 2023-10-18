@@ -1,137 +1,124 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <base href="/">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Flet application.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Flet">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png" />
-
-  <!-- Flet specific -->
-  <meta name="flet-route-url-strategy" content="path">
-  <meta name="flet-web-pyodide" content="true">
-  <meta name="flet-websocket-endpoint-path" content="/ws">
-
-  <title>Flet</title>
-  <link rel="manifest" href="manifest.json">
-
-  <script>
-    var webRenderer = "auto";
-    var useColorEmoji = false;
-  </script>
-
-  <script>webRenderer="canvaskit";</script>
-  <script>useColorEmoji=false;</script>
-
-  
-        <script>
-            var micropipIncludePre = false;
-            var pythonModuleName = "main";
-        </script>
-        <script src="python.js"></script>
-        
-
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "1549198364";
-  </script>
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
-
 <body>
-  <div id="loading">
-    <style>
-      body {
-        inset: 0;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-        position: fixed;
-      }
-
-      #loading {
-        align-items: center;
-        display: flex;
-        height: 100%;
-        justify-content: center;
-        width: 100%;
-      }
-
-      #loading img {
-        animation: 1s ease-in-out 0s infinite alternate breathe;
-        opacity: .66;
-        transition: opacity .4s;
-      }
-
-      #loading.main_done img {
-        opacity: 1;
-      }
-
-      #loading.init_done img {
-        animation: .33s ease-in-out 0s 1 forwards zooooom;
-        opacity: .05;
-      }
-
-      @keyframes breathe {
-        from {
-          transform: scale(0.4);
-          opacity: 1.0;
-        }
-
-        to {
-          transform: scale(0.35);
-          opacity: .7;
-        }
-      }
-
-      @keyframes zooooom {
-        from {
-          transform: scale(0.4)
-        }
-
-        to {
-          transform: scale(10)
-        }
-      }
-    </style>
-    <img src="icons/loading-animation.png" alt="Loading..." />
-  </div>
-  <script>
-    window.addEventListener('load', function () {
-      var loading = document.querySelector('#loading');
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        }
-      }).then(function (engineInitializer) {
-        loading.classList.add('main_done');
-        return engineInitializer.initializeEngine({
-          renderer: webRenderer,
-          useColorEmoji: useColorEmoji,
-        });
-      }).then(function (appRunner) {
-        loading.classList.add('init_done');
-        return appRunner.runApp();
-      }).then(function (app) {
-        // Wait a few milliseconds so users can see the "zoooom" animation
-        // before getting rid of the "loading" div.
-        window.setTimeout(function () {
-          loading.remove();
-        }, 200);
-      });
-    });
-  </script>
+    <py-script>
+        import flet as ft
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        
+        def main(pagina: ft.Page):
+            pagina.title = "Teste Flet."
+            pagina.vertical_alignment = ft.MainAxisAlignment.START
+            pagina.window_width = 450
+            pagina.window_height = 750
+            
+            def send(nome, idade, sexo, obs):
+                # Configurações do remetente
+                remetente_email = "memeshaha132@gmail.com"
+                remetente_senha = "kcqw zzvu fqwa gllh"
+        
+                # Configurações do destinatário
+                destinatario_email = "thiagolcsalves@gmail.com"
+        
+                # Configurações do servidor SMTP do Gmail
+                smtp_servidor = "smtp.gmail.com"
+                smtp_porta = 587
+        
+                # Criação da mensagem
+                assunto = f"Informações do paciente: {nome}"
+                corpo = f"Nome completo: {nome} \nIdade: {idade} \nSexo: {sexo} \nObservações importantes: {obs}"
+        
+                mensagem = MIMEMultipart()
+                mensagem['From'] = remetente_email
+                mensagem['To'] = destinatario_email
+                mensagem['Subject'] = assunto
+                mensagem.attach(MIMEText(corpo, 'plain'))
+        
+                # Conexão com o servidor SMTP
+                try:
+                    servidor_smtp = smtplib.SMTP(smtp_servidor, smtp_porta)
+                    servidor_smtp.starttls()  # Inicia a camada de segurança TLS
+                    servidor_smtp.login(remetente_email, remetente_senha)
+                    
+                    # Envio do e-mail
+                    servidor_smtp.sendmail(remetente_email, destinatario_email, mensagem.as_string())
+                    
+                    print("E-mail enviado com sucesso!")
+        
+                except Exception as e:
+                    print("Erro ao enviar o e-mail:", str(e))
+        
+                finally:
+                    # Fecha a conexão com o servidor SMTP
+                    if servidor_smtp:
+                        servidor_smtp.quit()
+            
+            #Funções
+            def enviar(e):
+                if not name_box.value:
+                    name_box.error_text = "Digite todas as informações!"
+                    pagina.update()
+                else:
+                    pagina.update()
+                    nome = name_box.value
+                    idade = age_box.value
+                    sexo = sex_box.value
+                    obs = obs_box.value
+                    send(nome, idade, sexo, obs)
+                    output_text.value = "Informações enviadas com sucesso!"
+                    pagina.update()
+                
+            #Estrutura visual
+            name_box = ft.TextField(label="Seu nome completo*")
+            age_box = ft.TextField(label="Sua idade*")
+            sex_box = ft.Dropdown(
+                label = "Sexo*",
+                width = 120,
+                options=[
+                    ft.dropdown.Option("Masculino"),
+                    ft.dropdown.Option("Feminino"),
+                ],
+            )
+            obs_box = ft.TextField(
+                label="Observações",
+                multiline=True,
+                min_lines=1,
+                max_lines=3,
+                )
+            send_button = ft.ElevatedButton("Enviar", on_click=enviar)
+            output_text = ft.Text()
+            img = ft.Image(
+                src='assets/b12logo.png',
+                width=100,
+                height=100,
+                fit=ft.ImageFit.CONTAIN,
+            )
+            
+            #Inserir elementos na pagina
+            pagina.add(
+                ft.ResponsiveRow(col=6, controls=[
+                    img,
+                    name_box,
+                    age_box,
+                    sex_box,
+                    obs_box,
+                    send_button,
+                ], alignment=ft.MainAxisAlignment.CENTER),
+                
+                ft.ResponsiveRow(col=6, controls=[
+                    output_text
+                ], vertical_alignment=ft.MainAxisAlignment.CENTER)
+            )
+        
+        ft.app(target=main,assets_dir="assets")
+    </py-script>>
 </body>
-
 </html>
